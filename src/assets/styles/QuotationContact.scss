@@ -1,0 +1,67 @@
+@import './variables.scss';
+
+.quotation-contact-section {
+  width: 100%;
+  background: #ffffff;
+
+  > .section-title {
+    margin-bottom: 12px;
+  }
+
+  .field-label {
+    margin-bottom: 5px;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .form-input {
+    .MuiInputBase-root {
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+
+    .MuiOutlinedInput-notchedOutline {
+      border-color: #d1d5db;
+    }
+
+    &:hover .MuiOutlinedInput-notchedOutline {
+      border-color: #9ca3af;
+    }
+
+    .Mui-focused .MuiOutlinedInput-notchedOutline {
+      border-color: #1c64f2;
+      border-width: 1px;
+    }
+
+    input,
+    textarea {
+      color: #111827;
+      font-size: 14px;
+    }
+  }
+
+  .field-label-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .MuiInputBase-root.Mui-disabled,
+  .MuiInputBase-root[readonly] {
+    background: #f3f4f6;
+    color: #6b7280;
+  }
+
+  .MuiGrid-item {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.quotation-lead-extra {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 0px solid #e5e7eb;
+}

@@ -1,0 +1,221 @@
+@import './variables.scss';
+
+.quotation-items-section {
+  background: #ffffff;
+
+  > .section-title {
+    margin-bottom: 12px;
+  }
+
+  .qi-section-heading {
+    margin: 0;
+    padding: 16px 18px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .field-label {
+    padding-bottom: 4px;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .form-input {
+    .MuiInputBase-root {
+      min-height: 36px;
+      background: #ffffff;
+      border-radius: 8px;
+    }
+
+    .MuiOutlinedInput-notchedOutline {
+      border-color: #d1d5db;
+    }
+
+    &:hover .MuiOutlinedInput-notchedOutline {
+      border-color: #9ca3af;
+    }
+
+    input,
+    textarea {
+      padding: 7px 9px;
+      color: #111827;
+      font-size: 13px !important;
+    }
+  }
+
+  .MuiInputBase-root.Mui-disabled,
+  .MuiInputBase-root[readonly] {
+    background: #f9fafb;
+    color: #374151;
+  }
+}
+
+.qi-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.qi-table {
+  width: 100%;
+  min-width: 1120px;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+
+  th {
+    padding: 11px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151;
+    font-size: 13px;
+    vertical-align: middle;
+  }
+
+  tbody tr:hover {
+    background: #f9fafb;
+  }
+}
+
+.col-drag {
+  width: 34px;
+}
+
+.col-serial {
+  width: 46px;
+  text-align: center;
+}
+
+.col-product {
+  width: 25%;
+  min-width: 220px;
+}
+
+.col-qty {
+  width: 76px;
+}
+
+.col-cost,
+.col-selling,
+.col-discount,
+.col-gst,
+.col-total {
+  width: 120px;
+}
+
+.col-margin {
+  width: 150px;
+}
+
+.col-remove {
+  width: 42px;
+  text-align: center;
+}
+
+.qi-drag {
+  color: #9ca3af;
+  text-align: center;
+}
+
+.qi-grip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 28px;
+  color: #9ca3af;
+  cursor: grab;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.qi-row-drag-over {
+  background: #eff6ff;
+}
+
+.qi-table .MuiAutocomplete-inputRoot {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.qi-dropdown {
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 8px 22px rgba(17, 24, 39, 0.08);
+}
+
+.qi-add-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 13px;
+  border-top: 1px solid #e5e7eb;
+  color: #1c64f2;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: #f9fafb;
+  }
+}
+
+.add-item-btn--bottom {
+  margin: 14px 18px 16px;
+}
+
+.qi-empty-state {
+  min-height: 152px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 26px 16px 32px;
+  border-top: 1px solid #e5e7eb;
+  color: #6b7280;
+  text-align: center;
+
+  strong {
+    color: #111827;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  span {
+    font-size: 13px;
+  }
+}
+
+.qi-remove {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #ef4444;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+}
