@@ -8,6 +8,7 @@ import QuotationContactSection from '../components/quotation/QuotationContactSec
 import QuotationItemsSection from '../components/quotation/QuotationItemsSection'
 import QuotationFooterSection from '../components/quotation/QuotationFooterSection'
 import QuotationSummary from './quotation/QuotationSummary'
+import QuotationLocationsSection from '../components/quotation/QuotationLocationsSection'
 
 import {
   fetchAllProducts,
@@ -46,6 +47,7 @@ function CreateQuotation() {
   const [notes, setNotes] = useState('')
 
   const [items, setItems] = useState([])
+  const [locationId, setLocationId] = useState('')
 
   const { leadId: routeLeadId } = useParams()
 
@@ -288,14 +290,7 @@ function CreateQuotation() {
       total_tax: Number(totals.totalTax || 0),
       grand_total: Number(totals.grandTotal || 0),
 
-      items: validItems.map(i => ({
-        product_id: i.product.id,
-        variant_id: i.variant_id || null,
-        quantity: Number(i.quantity),
-        unit_price: Number(i.selling_price),
-        discount: Number(i.discount || 0),
-        gst_rate: Number(i.gst_rate || 0)
-      })),
+      items: [],
 
       ...(quotationMode === 'CATERING' && {
         pax,
@@ -305,6 +300,37 @@ function CreateQuotation() {
         event_location: cateringMeta.event_location || null
       })
     }
+
+    const payloadItems = [];
+    validItems.forEach(i => {
+      const allocations = i.room_allocations || {};
+      const allocEntries = Object.entries(allocations).filter(([k, v]) => v > 0);
+      
+      if (allocEntries.length > 0) {
+        allocEntries.forEach(([roomName, qty]) => {
+          payloadItems.push({
+            product_id: i.product.id,
+            variant_id: i.variant_id || null,
+            quantity: Number(qty),
+            unit_price: Number(i.selling_price),
+            discount: Number(i.discount || 0),
+            gst_rate: Number(i.gst_rate || 0),
+            room_name: roomName
+          });
+        });
+      } else {
+        payloadItems.push({
+          product_id: i.product.id,
+          variant_id: i.variant_id || null,
+          quantity: Number(i.quantity),
+          unit_price: Number(i.selling_price),
+          discount: Number(i.discount || 0),
+          gst_rate: Number(i.gst_rate || 0),
+          room_name: null
+        });
+      }
+    });
+    payload.items = payloadItems;
 
     try {
       await createQuotation(payload)
@@ -396,6 +422,15 @@ function CreateQuotation() {
               reorderItems={reorderItems}
               products={products}
             />
+        </div>
+
+        <div className="quotation-card quotation-card--locations">
+          <QuotationLocationsSection
+            items={items}
+            setItems={setItems}
+            locationId={locationId}
+            setLocationId={setLocationId}
+          />
         </div>
 
         <div className="quotation-card quotation-card--summary">

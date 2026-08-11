@@ -25,6 +25,7 @@ const blankLocation = {
   state: '',
   country: 'India',
   pincode: '',
+  rooms: [],
   is_active: true,
 };
 
@@ -57,6 +58,29 @@ function LocationFormDialog({
       ...prev,
       [key]: value,
     }));
+  };
+
+  const handleAddRoom = () => {
+    setForm(prev => ({
+      ...prev,
+      rooms: [...(prev.rooms || []), '']
+    }));
+  };
+
+  const handleRoomChange = (index, value) => {
+    setForm(prev => {
+      const newRooms = [...(prev.rooms || [])];
+      newRooms[index] = value;
+      return { ...prev, rooms: newRooms };
+    });
+  };
+
+  const handleRemoveRoom = (index) => {
+    setForm(prev => {
+      const newRooms = [...(prev.rooms || [])];
+      newRooms.splice(index, 1);
+      return { ...prev, rooms: newRooms };
+    });
   };
 
   const handleSubmit = async () => {
@@ -255,6 +279,35 @@ function LocationFormDialog({
                 )
               }
             />
+          </Grid>
+
+          <Grid item xs={12}>
+            <Typography className="field-label" sx={{ mb: 1 }}>
+              Rooms / Areas
+            </Typography>
+            {(form.rooms || []).map((room, index) => (
+              <div key={index} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                <TextField
+                  className="form-input"
+                  fullWidth
+                  size="small"
+                  value={room}
+                  onChange={(e) => handleRoomChange(index, e.target.value)}
+                  placeholder="e.g. Master Bedroom"
+                />
+                <IconButton onClick={() => handleRemoveRoom(index)} color="error">
+                  <CloseIcon />
+                </IconButton>
+              </div>
+            ))}
+            <button
+              type="button"
+              className="cancel-btn"
+              style={{ marginTop: '8px', padding: '4px 12px', fontSize: '0.85rem' }}
+              onClick={handleAddRoom}
+            >
+              + Add Room
+            </button>
           </Grid>
 
           <Grid item xs={12} md={6}>
