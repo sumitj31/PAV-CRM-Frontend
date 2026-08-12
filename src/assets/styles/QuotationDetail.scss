@@ -113,6 +113,47 @@
   padding-bottom: 0;
 }
 
+.quotation-card--configuration {
+  padding: 0;
+  overflow: hidden;
+}
+
+.quotation-tabs {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding: 0 18px;
+  gap: 4px;
+}
+
+.quotation-tab {
+  position: relative;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #6b7280;
+  padding: 14px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.quotation-tab:hover {
+  color: #1c64f2;
+  background: #f9fafb;
+}
+
+.quotation-tab--active {
+  color: #1c64f2;
+  border-bottom-color: #1c64f2;
+}
+
+.quotation-tab-content {
+  width: 100%;
+}
+
 .quotation-section-heading {
   display: flex;
   align-items: flex-start;

@@ -14,8 +14,10 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import {
   createLocation,
+  getLocations,
+  getLocationById,
   updateLocation,
-} from '../../services/locationService';
+} from "../../services/locationService";
 
 const blankLocation = {
   name: '',
@@ -39,19 +41,33 @@ function LocationFormDialog({
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!open) return;
+  if (!open) return;
 
-    setForm(
-      location
-        ? {
-            ...blankLocation,
-            ...location,
-          }
-        : {
-            ...blankLocation,
-          }
-    );
-  }, [open, location]);
+  let rooms = [];
+
+  if (Array.isArray(location?.rooms)) {
+    rooms = location.rooms;
+  } else if (typeof location?.rooms === 'string') {
+    try {
+      rooms = JSON.parse(location.rooms);
+    } catch (error) {
+      console.error('Failed to parse rooms:', error);
+      rooms = [];
+    }
+  }
+
+  setForm(
+    location
+      ? {
+          ...blankLocation,
+          ...location,
+          rooms,
+        }
+      : {
+          ...blankLocation,
+        }
+  );
+}, [open, location]);
 
   const setField = (key, value) => {
     setForm((prev) => ({

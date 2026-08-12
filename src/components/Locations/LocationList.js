@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Chip } from "@mui/material";
 
 import LocationFormDialog from "./LocationFormDialog";
-import { getLocations, updateLocation } from "../../services/locationService";
+import { getLocations, updateLocation, getLocationById, } from "../../services/locationService";
 
 import "../../assets/styles/LeadsTable.scss";
 
@@ -63,10 +63,21 @@ function Locations() {
     setDialogOpen(true);
   };
 
-  const openEdit = (location) => {
-    setEditingLocation(location);
+  const openEdit = async (location) => {
+  try {
+    const fullLocation = await getLocationById(location.id);
+
+    setEditingLocation(fullLocation);
     setDialogOpen(true);
-  };
+  } catch (error) {
+    console.error("Failed to load location details:", error);
+
+    alert(
+      error?.response?.data?.error ||
+        "Failed to load location details"
+    );
+  }
+};
 
   const handleStatusToggle = async (location) => {
     try {
