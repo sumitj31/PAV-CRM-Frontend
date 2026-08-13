@@ -91,6 +91,7 @@ function QuotationContactSection({
             <Select
                 value={quotationType}
                 onChange={(e) => setQuotationType(e.target.value)}
+                disabled={isLocked}
             >
                 <MenuItem value="HOME_AUTOMATION">
                     Home Automation
