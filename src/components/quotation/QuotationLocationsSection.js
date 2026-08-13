@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { getLocations } from '../../services/locationService';
 
-function QuotationLocationsSection({ items, setItems, locationId, setLocationId }) {
+function QuotationLocationsSection({ items, setItems, locationId, setLocationId, readOnly = false }) {
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
@@ -118,6 +118,7 @@ function QuotationLocationsSection({ items, setItems, locationId, setLocationId 
           value={locationId || ''}
           label="Select Location"
           onChange={handleLocationChange}
+          disabled={readOnly}
         >
           <MenuItem value=""><em>None</em></MenuItem>
           {locations.map(loc => (
@@ -155,6 +156,7 @@ function QuotationLocationsSection({ items, setItems, locationId, setLocationId 
                         inputProps={{ min: 0, style: { textAlign: 'center', padding: '4px' } }}
                         value={getQuantity(p.id, room)}
                         onChange={(e) => handleQuantityChange(p, room, e.target.value)}
+                        disabled={readOnly}
                         style={{ width: '60px' }}
                       />
                     </TableCell>

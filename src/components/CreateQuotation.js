@@ -292,6 +292,7 @@ function CreateQuotation() {
       quotation_date: quotationDate,
       valid_until: validUntil || null,
       notes: notes || null,
+      location_id: locationId || null,
 
       // 🔒 LOCKED DISCOUNT LOGIC
       quotation_discount_type: "FLAT",

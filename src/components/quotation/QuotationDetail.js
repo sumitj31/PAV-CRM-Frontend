@@ -92,7 +92,13 @@ function QuotationDetail() {
     quotation_type: "HOME_AUTOMATION",
   });
 
-  const isLocked = quotation?.is_locked === 1;
+  const isLocked =
+  quotation?.is_locked === 1 ||
+  quotation?.is_locked === true ||
+  quotation?.is_locked === "1" ||
+  ["approved", "converted", "rejected"].includes(
+    String(quotation?.status || "").toLowerCase()
+  );
 
   const [items, setItems] = useState([])
 const [activeQuotationTab, setActiveQuotationTab] = useState("items")
@@ -222,49 +228,72 @@ const mergeDuplicateQuotationItems = (items) => {
    * Backend expects FULL snapshot fields always.
    */
   const buildSnapshotItemsPayload = useCallback(() => {
-    return (
-      (items || [])
-        .map((i) => {
-          const product_id = i.product_id ?? i.product?.id ?? null;
-          const product_name =
-            i.product_name ||
-            i.product?.name ||
-            i.product?.label ||
-            i.product?.title ||
-            "[Unnamed Product]";
+  const result = [];
 
-          return {
-            product_id,
-            product_name,
+  (items || []).forEach((i) => {
+    const product_id = i.product_id ?? i.product?.id ?? null;
+    if (!product_id) return;
 
-            variant_id: i.variant_id ?? null,
-            variant_sku: i.variant_sku || "",
-            room_name: i.room_name || null,
+    const product_name =
+      i.product_name ||
+      i.product?.name ||
+      i.product?.label ||
+      i.product?.title ||
+      "[Unnamed Product]";
 
-            quantity: Number(i.quantity) || 0,
+    const base = {
+      product_id,
+      product_name,
+      variant_id: i.variant_id ?? null,
+      variant_sku: i.variant_sku || "",
 
-            // COST SNAPSHOT
-            cost_price: Number(i.cost_price) || 0,
-            cost_price_qty: Number(i.cost_price_qty) || 1,
-            cost_price_unit: i.cost_price_unit || "unit",
-            cost_unit: i.cost_unit || i.cost_price_unit || "unit",
-            cost_pricing_mode: normalizeCostMode(i.cost_pricing_mode),
-            cost_discount_percent: Number(i.cost_discount_percent) || 0,
+      // COST SNAPSHOT
+      cost_price: Number(i.cost_price) || 0,
+      cost_price_qty: Number(i.cost_price_qty) || 1,
+      cost_price_unit: i.cost_price_unit || "unit",
+      cost_unit: i.cost_unit || i.cost_price_unit || "unit",
+      cost_pricing_mode: normalizeCostMode(i.cost_pricing_mode),
+      cost_discount_percent: Number(i.cost_discount_percent) || 0,
 
-            // SELLING SNAPSHOT
-            unit_price: Number(i.selling_price) || 0,
-            discount: Number(i.discount) || 0,
-            tax: Number(i.tax) || 0,
+      // SELLING SNAPSHOT
+      unit_price: Number(i.selling_price) || 0,
+      discount: Number(i.discount) || 0,
+      tax: Number(i.tax) || 0,
 
-            // JSON SNAPSHOTS
-            attributes_json: i.attributes_json || {},
-            packaging_json: i.packaging_json || {},
-          };
-        })
-        // ✅ Keep only valid rows (backend will reject otherwise)
-        .filter((i) => i.product_id && i.product_name && i.quantity > 0)
+      // JSON SNAPSHOTS
+      attributes_json: i.attributes_json || {},
+      packaging_json: i.packaging_json || {},
+    };
+
+    const allocations = i.room_allocations || {};
+    const allocEntries = Object.entries(allocations).filter(
+      ([, qty]) => Number(qty) > 0
     );
-  }, [items]);
+
+    if (allocEntries.length > 0) {
+      // One DB row per room
+      allocEntries.forEach(([roomName, qty]) => {
+        result.push({
+          ...base,
+          quantity: Number(qty),
+          room_name: roomName,
+        });
+      });
+    } else {
+      // No room allocation → single normal row
+      const qty = Number(i.quantity) || 0;
+      if (qty > 0) {
+        result.push({
+          ...base,
+          quantity: qty,
+          room_name: i.room_name || null,
+        });
+      }
+    }
+  });
+
+  return result;
+}, [items]);
 
   /* ---------------------------------------
      PRODUCT → QUOTATION SNAPSHOT
@@ -559,7 +588,7 @@ setItems(mergedItems);
       // 2) Save header + discount + totals (+ catering meta)
       await updateQuotation(id, {
         ...headerForm,
-
+        location_id: locationId || null,
         quotation_discount_type: "FLAT",
         quotation_discount_value: Number(overallDiscount || 0),
 
@@ -599,6 +628,7 @@ setItems(mergedItems);
         quotation_date: headerForm.quotation_date,
         valid_until: headerForm.valid_until || null,
         notes: headerForm.notes || null,
+        location_id: locationId || null,
         items: payloadItems,
         ...(quotation.quotation_mode === "CATERING" && {
           pax,
@@ -728,7 +758,7 @@ setItems(mergedItems);
           onApprove={async () => {
             try {
               await updateQuotationStatus(quotation.id, "approved");
-              setQuotation((prev) => ({ ...prev, status: "approved" }));
+              setQuotation((prev) => ({ ...prev, status: "approved", is_locked: 1, }));
               showNotification("Quotation approved");
             } catch {
               showNotification("Failed to approve quotation", "error");
@@ -892,6 +922,7 @@ setItems(mergedItems);
         setItems={setItems}
         locationId={locationId}
         setLocationId={setLocationId}
+        readOnly={!editMode || quotation?.is_locked || quotation?.status === 'converted'}
       />
 
     </div>
